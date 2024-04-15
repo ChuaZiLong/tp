@@ -7,6 +7,7 @@ import static scm.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 import static scm.address.testutil.Assert.assertThrows;
 import static scm.address.testutil.TypicalPersons.ALICE;
 import static scm.address.testutil.TypicalPersons.BENSON;
+import static scm.address.testutil.TypicalSchedules.getTypicalScheduleList;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,10 +17,11 @@ import org.junit.jupiter.api.Test;
 
 import scm.address.commons.core.GuiSettings;
 import scm.address.model.person.NameContainsKeywordsPredicate;
+import scm.address.model.theme.ThemeCollection;
 import scm.address.testutil.AddressBookBuilder;
 
 public class ModelManagerTest {
-
+    private static final String DEFAULT_THEME = ThemeCollection.getDarkTheme().getThemeName();
     private ModelManager modelManager = new ModelManager();
 
     @Test
@@ -38,7 +40,7 @@ public class ModelManagerTest {
     public void setUserPrefs_validUserPrefs_copiesUserPrefs() {
         UserPrefs userPrefs = new UserPrefs();
         userPrefs.setAddressBookFilePath(Paths.get("address/book/file/path"));
-        userPrefs.setGuiSettings(new GuiSettings(1, 2, 3, 4));
+        userPrefs.setGuiSettings(new GuiSettings(1, 2, 3, 4, DEFAULT_THEME));
         modelManager.setUserPrefs(userPrefs);
         assertEquals(userPrefs, modelManager.getUserPrefs());
 
@@ -55,7 +57,7 @@ public class ModelManagerTest {
 
     @Test
     public void setGuiSettings_validGuiSettings_setsGuiSettings() {
-        GuiSettings guiSettings = new GuiSettings(1, 2, 3, 4);
+        GuiSettings guiSettings = new GuiSettings(1, 2, 3, 4, DEFAULT_THEME);
         modelManager.setGuiSettings(guiSettings);
         assertEquals(guiSettings, modelManager.getGuiSettings());
     }
@@ -94,14 +96,24 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void removeSchedule_scheduleInList_success() {
+        Model modelManagerOne = new ModelManager(new AddressBook(), new UserPrefs(), getTypicalScheduleList());
+        Model modelManagerTwo = new ModelManager(new AddressBook(), new UserPrefs(), getTypicalScheduleList());
+        modelManagerOne.removeSchedule(modelManagerOne.getFilteredScheduleList().get(0));
+        modelManagerTwo.removeSchedule(modelManagerTwo.getFilteredScheduleList().get(0));
+        assertEquals(modelManagerOne, modelManagerTwo);
+    }
+
+    @Test
     public void equals() {
         AddressBook addressBook = new AddressBookBuilder().withPerson(ALICE).withPerson(BENSON).build();
         AddressBook differentAddressBook = new AddressBook();
         UserPrefs userPrefs = new UserPrefs();
+        ScheduleList scheduleList = new ScheduleList();
 
         // same values -> returns true
-        modelManager = new ModelManager(addressBook, userPrefs);
-        ModelManager modelManagerCopy = new ModelManager(addressBook, userPrefs);
+        modelManager = new ModelManager(addressBook, userPrefs, scheduleList);
+        ModelManager modelManagerCopy = new ModelManager(addressBook, userPrefs, scheduleList);
         assertTrue(modelManager.equals(modelManagerCopy));
 
         // same object -> returns true
@@ -114,12 +126,12 @@ public class ModelManagerTest {
         assertFalse(modelManager.equals(5));
 
         // different addressBook -> returns false
-        assertFalse(modelManager.equals(new ModelManager(differentAddressBook, userPrefs)));
+        assertFalse(modelManager.equals(new ModelManager(differentAddressBook, userPrefs, scheduleList)));
 
         // different filteredList -> returns false
         String[] keywords = ALICE.getName().fullName.split("\\s+");
         modelManager.updateFilteredPersonList(new NameContainsKeywordsPredicate(Arrays.asList(keywords)));
-        assertFalse(modelManager.equals(new ModelManager(addressBook, userPrefs)));
+        assertFalse(modelManager.equals(new ModelManager(addressBook, userPrefs, scheduleList)));
 
         // resets modelManager to initial state for upcoming tests
         modelManager.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
@@ -127,6 +139,6 @@ public class ModelManagerTest {
         // different userPrefs -> returns false
         UserPrefs differentUserPrefs = new UserPrefs();
         differentUserPrefs.setAddressBookFilePath(Paths.get("differentFilePath"));
-        assertFalse(modelManager.equals(new ModelManager(addressBook, differentUserPrefs)));
+        assertFalse(modelManager.equals(new ModelManager(addressBook, differentUserPrefs, scheduleList)));
     }
 }

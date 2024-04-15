@@ -1,8 +1,12 @@
 package scm.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
+import static scm.address.logic.commands.FindAndExportCommand.DEFAULT_DATA_DIR;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,11 +14,13 @@ import java.util.Set;
 import scm.address.commons.core.index.Index;
 import scm.address.commons.util.StringUtil;
 import scm.address.logic.parser.exceptions.ParseException;
-import scm.address.model.filename.Filename;
+import scm.address.model.file.Filename;
 import scm.address.model.person.Address;
 import scm.address.model.person.Email;
 import scm.address.model.person.Name;
 import scm.address.model.person.Phone;
+import scm.address.model.schedule.Description;
+import scm.address.model.schedule.Title;
 import scm.address.model.tag.Tag;
 
 /**
@@ -140,7 +146,6 @@ public class ParserUtil {
             if (!Filename.isValidFilename(trimmedFname)) {
                 throw new ParseException(Filename.MESSAGE_CONSTRAINTS);
             }
-            trimmedFname += ".json";
             trimmedFname = "./data/" + trimmedFname;
             Filename curFilename = new Filename(trimmedFname);
             if (filenameSet.contains(curFilename)) {
@@ -150,5 +155,63 @@ public class ParserUtil {
             filenameSet.add(curFilename);
         }
         return fileSet;
+    }
+
+    /**
+     * Parses the given {@code String} and returns a File object.
+     *
+     * @param filename The string to be parsed into a File object.
+     * @return The parsed File object.
+     * @throws ParseException If the given string does not match the expected format.
+     */
+    public static File parseFileForExport(String filename) throws ParseException {
+        requireNonNull(filename);
+        String trimmedFname = filename.trim();
+        if (!Filename.isValidFilename(trimmedFname)) {
+            throw new ParseException(Filename.MESSAGE_CONSTRAINTS);
+        }
+        trimmedFname = "./" + DEFAULT_DATA_DIR + trimmedFname;
+        return new File(trimmedFname);
+    }
+
+    /**
+     * Parses the given {@code String} of arguments and returns a LocalDateTime object.
+     *
+     * @param dateTimeStr The string to be parsed into a LocalDateTime object.
+     * @return The parsed LocalDateTime object.
+     * @throws ParseException If the given string does not match the expected format.
+     */
+    public static LocalDateTime parseDateTime(String dateTimeStr) throws ParseException {
+        try {
+            return LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        } catch (DateTimeParseException e) {
+            throw new ParseException("Invalid date time format. Correct format: yyyy-MM-dd HH:mm");
+        }
+    }
+
+    /**
+     * Parses the given {@code String} and returns a Title object.
+     *
+     * @param titleStr The string to be parsed into a Title object.
+     * @return The parsed Title object.
+     */
+    public static Title parseTitle(String titleStr) {
+        if (titleStr == null) {
+            throw new NullPointerException("The title cannot be null.");
+        }
+        return new Title(titleStr);
+    }
+
+    /**
+     * Parses the given {@code String} and returns a Description object.
+     *
+     * @param descriptionStr The string to be parsed into a Description object.
+     * @return The parsed Description object.
+     */
+    public static Description parseDescription(String descriptionStr) {
+        if (descriptionStr == null) {
+            throw new NullPointerException("The description cannot be null.");
+        }
+        return new Description(descriptionStr);
     }
 }

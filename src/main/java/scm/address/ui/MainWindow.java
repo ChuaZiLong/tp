@@ -1,9 +1,12 @@
 package scm.address.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
@@ -16,6 +19,8 @@ import scm.address.logic.Logic;
 import scm.address.logic.commands.CommandResult;
 import scm.address.logic.commands.exceptions.CommandException;
 import scm.address.logic.parser.exceptions.ParseException;
+import scm.address.model.theme.Theme;
+import scm.address.model.theme.ThemeCollection;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -24,6 +29,7 @@ import scm.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final String EXTENSIONS_CSS_FILE_PATH = "/view/Extensions.css";
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -32,6 +38,7 @@ public class MainWindow extends UiPart<Stage> {
 
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
+    private ScheduleListPanel scheduleListPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
 
@@ -43,6 +50,9 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private StackPane personListPanelPlaceholder;
+
+    @FXML
+    private StackPane scheduleListPanelPlaceholder;
 
     @FXML
     private StackPane resultDisplayPlaceholder;
@@ -112,6 +122,8 @@ public class MainWindow extends UiPart<Stage> {
     void fillInnerParts() {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
+        scheduleListPanel = new ScheduleListPanel(logic.getFilteredScheduleList());
+        scheduleListPanelPlaceholder.getChildren().add(scheduleListPanel.getRoot());
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -157,7 +169,7 @@ public class MainWindow extends UiPart<Stage> {
     @FXML
     private void handleExit() {
         GuiSettings guiSettings = new GuiSettings(primaryStage.getWidth(), primaryStage.getHeight(),
-                (int) primaryStage.getX(), (int) primaryStage.getY());
+                (int) primaryStage.getX(), (int) primaryStage.getY(), logic.getGuiSettings().getTheme());
         logic.setGuiSettings(guiSettings);
         helpWindow.hide();
         primaryStage.hide();
@@ -186,6 +198,10 @@ public class MainWindow extends UiPart<Stage> {
                 handleExit();
             }
 
+            if (commandResult.isChangeTheme()) {
+                handleChangeTheme();
+            }
+
             return commandResult;
         } catch (CommandException | ParseException e) {
             logger.info("An error occurred while executing command: " + commandText);
@@ -193,4 +209,43 @@ public class MainWindow extends UiPart<Stage> {
             throw e;
         }
     }
+
+    /**
+     * Changes the theme of the application.
+     */
+    // GCOVR_EXCL_START
+    // This method cannot be tested as it works on the UI. It is excluded from testing.
+    private void handleChangeTheme() {
+
+        String themeName = logic.getGuiSettings().getTheme();
+
+        try {
+            Theme theme = ThemeCollection.getTheme(themeName);
+            setTheme(theme);
+        } catch (Exception e) {
+            logger.warning("Error changing theme: " + e.getMessage());
+            resultDisplay.setFeedbackToUser("Error changing theme: " + e.getMessage());
+        }
+    }
+    // GCOVR_EXCL_STOP
+
+    /**
+     * Changes the CSS of the application
+     *
+     * @param theme The theme to be set
+     */
+    // GCOVR_EXCL_START
+    // This method cannot be tested as it works on the UI. It is excluded from testing.
+    private void setTheme(Theme theme) {
+        requireNonNull(theme);
+
+        String cssFilePath = theme.getThemeCssPath();
+        String extensionsCssPath = theme.getThemeExtensionsCssPath();
+
+        Scene scene = primaryStage.getScene();
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(cssFilePath);
+        scene.getStylesheets().add(extensionsCssPath);
+    }
+    // GCOVR_EXCL_STOP
 }
