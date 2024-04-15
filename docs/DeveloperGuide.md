@@ -518,6 +518,17 @@ Use case ends.
 
 Use case ends.
 
+### Add Schedule Command Implementation
+
+This section explains the implementation of the `AddScheduleCommand`.
+Below is a sequence diagram that shows the interactions involved when a user adds a schedule through the application.
+
+![Add Schedule Command Sequence Diagram](tp/docs/diagrams/AddScheduleCommandSequenceDiagram.puml)
+
+As shown in the diagram, the `AddScheduleCommand` takes user input from the UI, parses it to create a schedule. 
+It interacts with the model to add the schedule to the system. A success message is then relayed back to the user.
+
+
 **Use case: Viewing schedules in a calendar**
 
 **MSS**
