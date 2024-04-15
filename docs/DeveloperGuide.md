@@ -67,7 +67,7 @@ The sections below give more details of each component.
 
 ### UI component
 
-The **API** of this component is specified in [`Ui.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/Ui.java)
+The **API** of this component is specified in [`Ui.java`](https://github.com/AY2324S2-CS2103T-W08-3/tp/blob/master/src/main/java/scm/address/ui/Ui.java)
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
@@ -79,8 +79,8 @@ The `Ui` component,
 
 * executes user commands using the `Logic` component.
 * listens for changes to `Model` data so that the UI can be updated with the modified data.
-* keeps a reference to the `Logic` component, because the `Ui` relies on the `Logic` to execute commands.
-* depends on some classes in the `Model` component, as it displays `Person` and `Schedule` objects residing in the `Model`.
+* keeps a reference to the `Logic` component, because the `Ui` relies on the `Logic` component to execute commands.
+* depends on some classes in the `Model` component, as it displays the `Person` and `Schedule` objects residing in the `Model`.
 
 ### Logic component
 
@@ -124,7 +124,7 @@ How the parsing works:
 The `Model` component,
 
 * stores the contact manager data, i.e., all `Person` objects (which are contained in a `UniquePersonList` object), as well as all schedule list data (i.e., all `Schedule` objects, which are contained in a `ScheduleList` object).
-* stores the currently 'selected' `Person` objects (e.g., results of a search query) as a separate _filtered_ list which is exposed to outsiders as an unmodifiable `ObservableList<Person>` that can be 'observed' e.g. the UI can be bound to this list so that the UI automatically updates when the data in the list change.
+* stores the currently 'selected' `Person` objects (e.g., results of a search query) as a separate _filtered_ list which is exposed to outsiders as an unmodifiable `ObservableList<Person>` that can be 'observed', e.g., the UI can be bound to this list so that the UI automatically updates when the data in the list change.
 * stores the currently 'selected' `Schedule` objects in a manner analogous to the above 'selected' `Person` objects.
 * stores a `UserPref` object that represents the user’s preferences. This is exposed to the outside as a `ReadOnlyUserPref` objects.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
@@ -174,17 +174,25 @@ This command is implemented in the above manner in order to follow OOP principle
 
 There is initially an alternative considered to refit the entire logic of the model and saving mechanism to fit this import feature. However, the current implementation is chosen over this due to the possibility of rewriting many pieces of unrelated code and of unknowingly breaking other features in the process. Another alternative that was not followed was to only use Jackson-based features to implement the import feature, in order to have more control over the code itself. However, as this feature should integrate with the exporting feature of the application, it became apparent that code reuse should be prioritised.
 
+Below is a sequence diagram on how the import feature works:
+
+<puml src="diagrams/ImportSequenceDiagram.puml" width="550" />
+
 ### Edit schedule feature
 
 #### Implementation
 
-The edit schedule feature is implemented through the use of `EditScheduleDescriptor`. Given a valid index to edit, this command will be able to edit the details of the `Schedule` in such index. The implementation of the feature is similar to that of `EditCommand`.
+The edit schedule feature is implemented through the use of `EditScheduleDescriptor` and `EditScheduleCommand`. Given a valid index to edit, this command will be able to edit the details of the `Schedule` in such index. The implementation of the feature is similar to that of `EditCommand`.
 
 This feature implements the following operations, other than the methods that it is already overriding:
 
 * `EditScheduleCommand#createEditedSchedule()`: Creates a new `Schedule` given an old schedule to edit as well as an `EditScheduleDescriptor`.
 
 This command is implemented in the above manner to improve its adherence to OOP principles, as well as to allow it to have similarities to the implementation of `EditCommand`. This would allow it to be more extensible and supportive of further development.
+
+### Delete schedule feature
+
+The delete schedule feature is implemented through the use of `DeleteScheduleCommand`. Given a valid index found in the current list of filtered schedules, the command will be able to delete the `Schedule` in such index. The implementation of the feature is similar to that of `DeleteCommand`, in order to improve maintainability.
 
 ### Find schedule feature
 
@@ -311,7 +319,7 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
+* has a need to manage a significant number of contacts and events
 * prefer desktop apps over other types
 * can type fast
 * prefers typing to mouse interactions
@@ -367,7 +375,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3.  User requests to delete a specific person in the list
 4. Student Contact Manager deletes the person
 
-   Use case ends.
+    Use case ends.
 
 **Extensions**
 
