@@ -1,7 +1,7 @@
 ---
-  layout: default.md
-  title: "Developer Guide"
-  pageNav: 3
+layout: default.md
+title: "Developer Guide"
+pageNav: 3
 ---
 
 # Student Contact Manager Developer Guide
@@ -278,13 +278,13 @@ The following activity diagram summarizes what happens when a user executes a ne
 **Aspect: How undo & redo executes:**
 
 * **Alternative 1 (current choice):** Saves the entire contact manager.
-  * Pros: Easy to implement.
-  * Cons: May have performance issues in terms of memory usage.
+    * Pros: Easy to implement.
+    * Cons: May have performance issues in terms of memory usage.
 
 * **Alternative 2:** Individual command knows how to undo/redo by
   itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
-  * Cons: We must ensure that the implementation of each individual command are correct.
+    * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
+    * Cons: We must ensure that the implementation of each individual command are correct.
 
 _{more aspects and alternatives to be added}_
 
@@ -367,7 +367,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3.  User requests to delete a specific person in the list
 4. Student Contact Manager deletes the person
 
-    Use case ends.
+   Use case ends.
 
 **Extensions**
 
@@ -395,21 +395,21 @@ Use case ends.
 
 * 1a. The user enters extra spaces before or after the command.
 
-  * 1a1. The application automatically trims the extra spaces and processes the command.
+    * 1a1. The application automatically trims the extra spaces and processes the command.
 
-    Use case resumes at step 2.
+      Use case resumes at step 2.
 
 * 1b. The user specifies multiple tags or incorrect parameters.
 
-  * 1b1. The application shows an error message and instructions for correct input format.
+    * 1b1. The application shows an error message and instructions for correct input format.
 
-    Use case ends.
+      Use case ends.
 
 * 2a. No users are found with the given tag.
 
-  * 2a1. The application notifies the user that no contacts were found with the specified tag.
+    * 2a1. The application notifies the user that no contacts were found with the specified tag.
 
-    Use case ends.
+      Use case ends.
 
 
 **Use case: Finding users and exporting data**
@@ -439,15 +439,15 @@ Use case ends.
 
 * 2a. No users match the given criteria.
 
-  * 2a1. The application alerts the user that no matching contacts were found.
+    * 2a1. The application alerts the user that no matching contacts were found.
 
-    Use case ends.
+      Use case ends.
 
 * 3a. The user specifies an invalid filename or multiple filenames.
 
-  * 3a1. The application shows an error message regarding the filename issue.
+    * 3a1. The application shows an error message regarding the filename issue.
 
-    Use case resumes at step 1.
+      Use case resumes at step 1.
 
 
 
@@ -472,15 +472,15 @@ Use case ends.
 
 * 2a. One or more specified files do not exist in the ./data/ directory.
 
-  * 2a1. The application informs the user which files could not be found.
+    * 2a1. The application informs the user which files could not be found.
 
-    Use case ends.
+      Use case ends.
 
 * 2b. One or more files are not in the correct JSON format.
 
-  * 2b1. The application notifies the user which files have format issues.
+    * 2b1. The application notifies the user which files have format issues.
 
-    Use case ends.
+      Use case ends.
 
 **Use case: Adding a schedule**
 
@@ -525,7 +525,7 @@ Below is a sequence diagram that shows the interactions involved when a user add
 
 <puml src="diagrams/AddScheduleCommandSequenceDiagram.puml" width="280" />
 
-As shown in the diagram, the `AddScheduleCommand` takes user input from the UI, parses it to create a schedule. 
+As shown in the diagram, the `AddScheduleCommand` takes user input from the UI, parses it to create a schedule.
 It interacts with the model to add the schedule to the system. A success message is then relayed back to the user.
 
 
@@ -591,15 +591,15 @@ testers are expected to do more *exploratory* testing.
 
 1. Initial launch
 
-   1. Download the jar file and copy into an empty folder
+    1. Download the jar file and copy into an empty folder
 
-   1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
+    1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
 
 1. Saving window preferences
 
-   1. Resize the window to an optimum size. Move the window to a different location. Close the window.
+    1. Resize the window to an optimum size. Move the window to a different location. Close the window.
 
-   1. Re-launch the app by double-clicking the jar file.<br>
+    1. Re-launch the app by double-clicking the jar file.<br>
        Expected: The most recent window size and location is retained.
 
 1. _{ more test cases …​ }_
@@ -608,16 +608,16 @@ testers are expected to do more *exploratory* testing.
 
 1. Deleting a person while all persons are being shown
 
-   1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
+    1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
 
-   1. Test case: `delete 1`<br>
-      Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
+    1. Test case: `delete 1`<br>
+       Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
 
-   1. Test case: `delete 0`<br>
-      Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
+    1. Test case: `delete 0`<br>
+       Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
 
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
+       Expected: Similar to previous.
 
 1. _{ more test cases …​ }_
 
@@ -625,7 +625,7 @@ testers are expected to do more *exploratory* testing.
 
 1. Dealing with missing/corrupted data files
 
-   1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
+    1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
 
 1. _{ more test cases …​ }_
 
@@ -639,4 +639,3 @@ Team size: 4
 4. Exporting people according to any searchable criteria: Currently, `find_and_export` only supports finding and exporting persons with the same tag. We plan to create another `export` command that would allow the exporting of individuals with any criteria, such as names, contact numbers, addresses, etc.
 5. Overflow when adding schedules: There is an issue with regards to medium- and long-length titles for schedules. We plan to accommodate longer event titles by adding scrolling and text wrapping up to a certain length (e.g., 30 characters for titles, 200 characters for descriptions).
 6. Overflow when adding contacts: there may be UI overflow issues when adding contacts that have long names, phone numbers, or addresses. We plan to fix this by both having text wrapping and limiting the length of such fields to reasonable lengths (e.g., 50 characters for names, 20 characters for phone numbers, and 200 characters for addresses).)
-
